@@ -30,12 +30,14 @@ for idx, schedule in enumerate(schedules):
         ("Sporadic", sporadic_jobs), 
         ("Aperiodic", aperiodic_jobs)
     ]
+    reject_num = {"Periodic": 0, "Sporadic": 0, "Aperiodic": 0}
     for job_type, jobs in task_group:
         for i, job in enumerate(jobs):
             res, new_time_line = fillin_schedule(job, job_type, i, time_line)
             if res == True:
                 time_line = new_time_line
             else:
+                reject_num[job_type] += 1
                 print(f"{job_type[0]} {i} -1 -1 Reject")
 
     show_schedule(time_line)
@@ -43,6 +45,12 @@ for idx, schedule in enumerate(schedules):
     # for i in range(0, 10):
     #     print(i, end=": ")
     #     print(time_line[i*10:(i+1)*10])
+
+    # show statistics of "Periodic", "Aperiodic", "Sporadic"
+    periodic_rate = reject_num["Periodic"] / len(periodic_jobs)
+    aperiodic_rate = reject_num["Aperiodic"] / len(aperiodic_jobs)
+    sporadic_jobs = reject_num["Sporadic"] / len(sporadic_jobs)
+    print(f"{periodic_rate} {aperiodic_rate} {sporadic_jobs}")
 
 # end of output
 print("-1")
