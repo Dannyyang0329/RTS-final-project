@@ -17,41 +17,74 @@ schedules = json.load(open(input_file))
 print(len(schedules))
 for idx, schedule in enumerate(schedules):
     print(idx)  # print schedule number
-    periodic_jobs = schedule["Periodic"]
-    aperiodic_jobs = schedule["Aperiodic"]
-    sporadic_jobs = schedule["Sporadic"]
+    periodic_jobs = get_job_info(schedule["Periodic"], "Periodic")
+    aperiodic_jobs = get_job_info(schedule["Aperiodic"], "Aperiodic")
+    sporadic_jobs = get_job_info(schedule["Sporadic"], "Sporadic")
+
+    hard_jobs = sorted(periodic_jobs+sporadic_jobs, key=lambda job: int(job[1]))
+    soft_jobs = sorted(aperiodic_jobs, key=lambda job: int(job[0]))
 
     # init time line
+    empty_time_line = ["None"] * MAX_TIME
     time_line = ["None"] * MAX_TIME
 
     # optimal off-line scheduling in 100 time units
-    task_group = [
-        ("Periodic", periodic_jobs),
-        ("Sporadic", sporadic_jobs), 
-        ("Aperiodic", aperiodic_jobs)
-    ]
-    reject_num = {"Periodic": 0, "Sporadic": 0, "Aperiodic": 0}
-    for job_type, jobs in task_group:
-        for i, job in enumerate(jobs):
-            res, new_time_line = fillin_schedule(job, job_type, i, time_line)
+    reject_list = []
+    while True:
+        is_finish = True
+        print(hard_jobs)
+        for h_job in hard_jobs:
+            res, new_time_line = fillin_schedule(h_job, time_line)
             if res == True:
                 time_line = new_time_line
             else:
-                reject_num[job_type] += 1
-                print(f"{job_type[0]} {i} -1 -1 Reject")
+                reject_list.append(str(f"{h_job[3][0]} {h_job[3][1:]} -1 -1 Reject"))
+                if h_job[3][0] == "P":
+                    time_line = empty_time_line.copy()
+                    hard_jobs = remove_reject_task(h_job[3], hard_jobs)
+                    is_finish = False
+                    break
+        if is_finish == True:
+            break
+
+    for s_job in soft_jobs:
+        res, new_time_line = fillin_schedule(s_job, time_line)
+        if res == True:
+            time_line = new_time_line
+        else:
+            reject_list.append(str(f"{s_job[3][0]} {s_job[3][1:]} -1 -1 Reject"))
+
+    for reject_job in reject_list:
+        print(reject_job)
 
     show_schedule(time_line)
+
     # print the detail of the time line
-    # for i in range(0, 10):
-    #     print(i, end=": ")
-    #     print(time_line[i*10:(i+1)*10])
+    for i in range(0, 10):
+        print(i, end=": ")
+        for j in range(i*10, (i+1)*10):
+            print("%5s" % time_line[j], end=" ")
+        print("")
 
     # show statistics of "Periodic", "Aperiodic", "Sporadic"
-    periodic_rate = reject_num["Periodic"] / len(periodic_jobs)
-    aperiodic_rate = reject_num["Aperiodic"] / len(aperiodic_jobs)
-    sporadic_jobs = reject_num["Sporadic"] / len(sporadic_jobs)
-    print(f"{periodic_rate} {aperiodic_rate} {sporadic_jobs}")
+    # periodic_rate = reject_num["Periodic"] / len(periodic_jobs)
+    # aperiodic_rate = reject_num["Aperiodic"] / len(aperiodic_jobs)
+    # sporadic_jobs = reject_num["Sporadic"] / len(sporadic_jobs)
+    # print(f"{periodic_rate} {aperiodic_rate} {sporadic_jobs}")
 
 # end of output
 print("-1")
 exit(0)
+
+
+# 1
+# 0
+# P 1 -1 -1 Reject
+# P 0 0 2 Complete
+# A 0 5 6 Complete
+# S 0 6 25 Complete
+# A 1 25 45 Complete
+# P 0 50 52 Complete
+# S 1 70 95 Complete
+# 0.5 0.0 0.0
+# -1
