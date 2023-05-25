@@ -23,6 +23,9 @@ for idx, schedule in enumerate(schedules):
 
     hard_jobs = sorted(periodic_jobs+sporadic_jobs, key=lambda job: int(job[1]))
     soft_jobs = sorted(aperiodic_jobs, key=lambda job: int(job[0]))
+    # sorted_periodic = sorted(periodic_jobs, key=lambda job: int(job[1]))
+    # sorted_sporadic = sorted(sporadic_jobs, key=lambda job: int(job[1]))
+    # sorted_aperiodic = sorted(aperiodic_jobs, key=lambda job: int(job[0]))
 
     # init time line
     empty_time_line = ["None"] * MAX_TIME
@@ -32,7 +35,6 @@ for idx, schedule in enumerate(schedules):
     reject_list = []
     while True:
         is_finish = True
-        print(hard_jobs)
         for h_job in hard_jobs:
             res, new_time_line = fillin_schedule(h_job, time_line)
             if res == True:
@@ -46,6 +48,34 @@ for idx, schedule in enumerate(schedules):
                     break
         if is_finish == True:
             break
+    # while True:
+    #     is_finish = True
+    #     for p_job in sorted_periodic:
+    #         res, new_time_line = fillin_schedule(p_job, time_line)
+    #         if res == True:
+    #             time_line = new_time_line
+    #         else:
+    #             reject_list.append(str(f"{p_job[3][0]} {p_job[3][1:]} -1 -1 Reject"))
+    #             time_line = empty_time_line.copy()
+    #             sorted_periodic = remove_reject_task(p_job[3], sorted_periodic)
+    #             is_finish = False
+    #             break
+    #     if is_finish == True:
+    #         break
+
+    # for s_job in sorted_sporadic:
+    #     res, new_time_line = fillin_schedule(s_job, time_line)
+    #     if res == True:
+    #         time_line = new_time_line
+    #     else:
+    #         reject_list.append(str(f"{s_job[3][0]} {s_job[3][1:]} -1 -1 Reject"))
+
+    # for a_job in sorted_aperiodic:
+    #     res, new_time_line = fillin_schedule(a_job, time_line)
+    #     if res == True:
+    #         time_line = new_time_line
+    #     else:
+    #         reject_list.append(str(f"{a_job[3][0]} {a_job[3][1:]} -1 -1 Reject"))
 
     for s_job in soft_jobs:
         res, new_time_line = fillin_schedule(s_job, time_line)
