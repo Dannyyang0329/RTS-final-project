@@ -51,11 +51,15 @@ def get_continuous_empty_time(start_t, time_line):
 
         
 def show_schedule(time_line):
+    output_list = []
     cur_job, job_idx, start_t, end_t = time_line[0][0], time_line[0][1:], 0, 0
     for cur_t in range(1, MAX_TIME):
         if time_line[cur_t] != cur_job+job_idx :
             if cur_job != "N":
-                print(f"{cur_job} {job_idx} {start_t} {end_t+1} Complete")
+                text = str(f"{cur_job} {job_idx} {start_t} {end_t+1} Complete")
+                output_list.append(text + "\n")
+                print(text)
             cur_job, job_idx, start_t, end_t = time_line[cur_t][0], time_line[cur_t][1:], cur_t, cur_t
         else:
             end_t += 1
+    return output_list
