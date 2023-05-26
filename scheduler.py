@@ -77,9 +77,9 @@ class Scheduler:
                     reject_num[1] += 1
                 elif reject_job[0] == "S":
                     reject_num[2] += 1
-            periodic_rate = reject_num[0] / len(schedule["Periodic"])
-            aperiodic_rate = reject_num[1] / len(aperiodic_jobs)
-            sporadic_rate = reject_num[2] / len(sporadic_jobs)
+            periodic_rate = reject_num[0] / len(schedule["Periodic"]) if len(schedule["Periodic"]) != 0 else 0
+            aperiodic_rate = reject_num[1] / len(aperiodic_jobs) if len(aperiodic_jobs) != 0 else 0
+            sporadic_rate = reject_num[2] / len(sporadic_jobs) if len(sporadic_jobs) != 0 else 0
             rates = str(f"{periodic_rate} {aperiodic_rate} {sporadic_rate}")
             print(rates)
             self.output_list.append(rates + "\n")

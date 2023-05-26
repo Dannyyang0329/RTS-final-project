@@ -46,6 +46,11 @@ class MainWindow_controller(QtWidgets.QMainWindow):
         self.schedule = Scheduler(self.file_path)
         self.schedule.schedule()
 
+        for i in range(0, MAX_TIME):
+            color = self.color["N"]
+            self.time_line[i].setStyleSheet(f"background-color: {color};")
+            self.time_line[i].setText("")
+
         for text in self.schedule.output_list:
             if text == "-1\n":
                 self.print_msg("-1\n")
